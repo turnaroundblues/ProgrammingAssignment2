@@ -8,15 +8,16 @@
 ## once cacheSolve is called
 ##
 makeCacheMatrix <- function(x = matrix()) {
+  ## when first called (before the first call to cacheSolve), set the inverse to NULL
   inv <- NULL
-  set <- function(y) {
-    x <<- y
-    inv <<- NULL
-  }
+  ## get retrieve the matrix itself from the list object created by makeCacheMatrix
   get <- function() x
+  ## setmtrxinv caches the inverse 
   setmtrxinv <- function(mtrxinv) inv <<- mtrxinv
+  ## getmtrxinv retrieves the inverse from the cache
   getmtrxinv <- function() inv
-  list(set = set, get = get,
+  
+  list(get = get,
        setmtrxinv = setmtrxinv,
        getmtrxinv = getmtrxinv)  
 }
@@ -25,14 +26,16 @@ makeCacheMatrix <- function(x = matrix()) {
 ## cacheSolve calculates the inverse of a matrix from the related object constructed by makeCacheMatrix,
 ## and saves the inverse (caches it) in that object.  In subsequent calls for the same matrix object, 
 ## cacheSolves simply retrieves the already calculated inverse and returns it.
-##
+## 
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+  ## Return the contents of the cache
   m <- x$getmtrxinv()
+  ## if cache is not NULL, simply returns the previously calculated inverse
   if(!is.null(m)) {
     message("getting cached inversematrix")
     return(m)
   }
+  ## otherwise, calculate the inverse and cache the inverse
   inputmatrix <- x$get()
   m <- solve(inputmatrix, ...)
   x$setmtrxinv(m)
